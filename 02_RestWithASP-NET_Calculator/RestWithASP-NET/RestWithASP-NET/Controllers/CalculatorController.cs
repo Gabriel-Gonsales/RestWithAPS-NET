@@ -9,15 +9,8 @@ namespace RestWithASP_NET.Controllers
 
         private readonly ILogger<CalculatorController> _logger;
 
-
-        //[HttpGet("sum/{firstNumber}/{secondNumber}")]
-        //[HttpGet("sub/{firstNumber}/{secondNumber}")]
-        //[HttpGet("div/{firstNumber}/{secondNumber}")]
-        //[HttpGet("mult/{firstNumber}/{secondNumber}")]
-        //[HttpGet("med/{firstNumber}/{secondNumber}")]
-        [HttpGet("sqrt/{firstNumber}")]
-
-        /*public IActionResult Get(string firstNumber, string secondNumber)
+        [HttpGet("sum/{firstNumber}/{secondNumber}")]
+        public IActionResult Sum(string firstNumber, string secondNumber)
         {
             if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
             {
@@ -25,9 +18,10 @@ namespace RestWithASP_NET.Controllers
                 return Ok(sum.ToString());
             }
             return BadRequest("Invalid Input");       
-        }*/
+        }
 
-        /*public IActionResult Get(string firstNumber, string secondNumber)
+        [HttpGet("sub/{firstNumber}/{secondNumber}")]
+        public IActionResult Sub(string firstNumber, string secondNumber)
         {
             if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
             {
@@ -35,9 +29,10 @@ namespace RestWithASP_NET.Controllers
                 return Ok(sub.ToString());
             }
             return BadRequest("Invalid Input");
-        }*/
+        }
 
-        /*public IActionResult Get(string firstNumber, string secondNumber)
+        [HttpGet("div/{firstNumber}/{secondNumber}")]
+        public IActionResult Div(string firstNumber, string secondNumber)
         {
             if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
             {
@@ -45,9 +40,10 @@ namespace RestWithASP_NET.Controllers
                 return Ok(sub.ToString());
             }
             return BadRequest("Invalid Input");
-        }*/
+        }
 
-        /*public IActionResult Get(string firstNumber, string secondNumber)
+        [HttpGet("mult/{firstNumber}/{secondNumber}")]
+        public IActionResult Mult(string firstNumber, string secondNumber)
         {
             if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
             {
@@ -55,9 +51,10 @@ namespace RestWithASP_NET.Controllers
                 return Ok(sub.ToString());
             }
             return BadRequest("Invalid Input");
-        }*/
+        }
 
-        /*public IActionResult Get(string firstNumber, string secondNumber)
+        [HttpGet("med/{firstNumber}/{secondNumber}")]
+        public IActionResult Med(string firstNumber, string secondNumber)
         {
             if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
             {
@@ -65,9 +62,10 @@ namespace RestWithASP_NET.Controllers
                 return Ok(med.ToString());
             }
             return BadRequest("Invalid Input");
-        }*/
+        }
 
-        public IActionResult Get(string firstNumber)
+        [HttpGet("sqrt/{firstNumber}")]
+        public IActionResult Sqrt(string firstNumber)
         {
             if (IsNumeric(firstNumber))
             {
