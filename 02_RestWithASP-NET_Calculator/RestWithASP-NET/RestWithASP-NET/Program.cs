@@ -1,24 +1,41 @@
+using Microsoft.EntityFrameworkCore;
+using RestWithASP_NET.Model.Context;
 using RestWithASP_NET.Services;
 using RestWithASP_NET.Services.Implementations;
 
-var builder = WebApplication.CreateBuilder(args);
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+        // Add services to the container.
 
-builder.Services.AddControllers();
+        builder.Services.AddControllers();
 
-builder.Services.AddScoped<IPersonService, PersonServiceImplementation>();
+        builder.Services.AddScoped<IPersonService, PersonServiceImplementation>();
 
-var app = builder.Build();
+        string connection = Conexao(builder: builder);
 
-// Configure the HTTP request pipeline.
+        builder.Services.AddDbContext<MySQLContext>(options => options.UseMySql(connection, ServerVersion.AutoDetect(connection)));
 
-app.UseHttpsRedirection();
+        var app = builder.Build();
 
-app.UseAuthorization();
+        // Configure the HTTP request pipeline.
 
-app.UseRouting();
+        app.UseHttpsRedirection();
 
-app.MapControllers();
+        app.UseAuthorization();
 
-app.Run();
+        app.UseRouting();
+
+        app.MapControllers();
+
+        app.Run();
+
+        static string Conexao(WebApplicationBuilder builder)
+        {
+            return builder.Configuration["MySQLConnection:MySQLConnectionString"];
+        }
+    }
+}
