@@ -13,6 +13,8 @@ internal class Program
 
         builder.Services.AddControllers();
 
+        builder.Services.AddApiVersioning();
+
         builder.Services.AddScoped<IPersonService, PersonServiceImplementation>();
 
         string connection = Conexao(builder: builder);
