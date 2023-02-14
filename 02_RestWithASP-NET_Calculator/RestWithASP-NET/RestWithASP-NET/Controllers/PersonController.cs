@@ -5,14 +5,14 @@ using RestWithASP_NET.Services;
 namespace RestWithASP_NET.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PersonController : ControllerBase
     {
 
         private readonly ILogger<PersonController> _logger;
         private IPersonService _personService;
 
-        public PersonController(ILogger<> logger,IPersonService personService)
+        public PersonController(ILogger<PersonController> logger,IPersonService personService)
         {
             _logger = logger;
             _personService = personService;
@@ -22,7 +22,7 @@ namespace RestWithASP_NET.Controllers
         public IActionResult Get()
         {
             return Ok(_personService.FindAll());     
-        }
+        }        
 
         [HttpGet("{id}")]
         public IActionResult Get(long id)
