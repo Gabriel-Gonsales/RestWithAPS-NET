@@ -12,6 +12,8 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using RestWithASPNETUdemy.Repository.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace RestWithASPNETUdemy
 {
@@ -44,6 +46,15 @@ namespace RestWithASPNETUdemy
             {
                 MigrateDatabase(connection);
             }
+
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/xml"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
+            })
+            .AddXmlSerializerFormatters();
             //Versioning API
             services.AddApiVersioning();
 
@@ -53,7 +64,6 @@ namespace RestWithASPNETUdemy
 
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
