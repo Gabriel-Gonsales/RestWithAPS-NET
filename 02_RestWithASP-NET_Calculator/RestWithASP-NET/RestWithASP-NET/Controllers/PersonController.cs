@@ -50,7 +50,7 @@ namespace RestWithASP_NET.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
-            _personBusiness.delete(id);
+            _personBusiness.Delete(id);
             return NoContent();
         }
     }
