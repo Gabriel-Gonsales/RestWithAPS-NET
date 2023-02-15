@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using RestWithASPNETUdemy.Repository.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using RestWithASPNETUdemy.Hypermedia.Filters;
+using RestWithASPNETUdemy.Hypermedia.Enricher;
 
 namespace RestWithASPNETUdemy
 {
@@ -55,6 +57,12 @@ namespace RestWithASPNETUdemy
                 options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
             })
             .AddXmlSerializerFormatters();
+
+            var filterOptions = new HypermediaFilterOptions();
+            filterOptions.ContentResponseEnricherList.Add(new PersonEricher());
+
+            services.AddSingleton(filterOptions);
+
             //Versioning API
             services.AddApiVersioning();
 
@@ -82,6 +90,7 @@ namespace RestWithASPNETUdemy
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("DefaultApi","{controller=values}/{id?}")
             });
         }
         private void MigrateDatabase(string connection)
