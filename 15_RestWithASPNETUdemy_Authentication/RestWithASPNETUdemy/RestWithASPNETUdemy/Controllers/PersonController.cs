@@ -36,7 +36,7 @@ namespace RestWithASPNETUdemy.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        [TypeFilter(typeof(HypermediaFilter))]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
             return Ok(_personBusiness.FindAll());
@@ -50,7 +50,7 @@ namespace RestWithASPNETUdemy.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        [TypeFilter(typeof(HypermediaFilter))]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(long id)
         {
             var person = _personBusiness.FindByID(id);
@@ -64,7 +64,7 @@ namespace RestWithASPNETUdemy.Controllers
         [ProducesResponseType((200), Type = typeof(PersonVO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        [TypeFilter(typeof(HypermediaFilter))]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody] PersonVO person)
         {
             if (person == null) return BadRequest();
@@ -77,7 +77,7 @@ namespace RestWithASPNETUdemy.Controllers
         [ProducesResponseType((200), Type = typeof(PersonVO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        [TypeFilter(typeof(HypermediaFilter))]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put([FromBody] PersonVO person)
         {
             if (person == null) return BadRequest();

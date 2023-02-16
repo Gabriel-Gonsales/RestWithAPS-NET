@@ -15,6 +15,7 @@ using RestWithASPNETUdemy.Repository.Generic;
 using Microsoft.Net.Http.Headers;
 using RestWithASPNETUdemy.Hypermedia.Filters;
 using RestWithASPNETUdemy.Hypermedia.Enricher;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Rewrite;
 using RestWithASPNETUdemy.Services;
 using RestWithASPNETUdemy.Services.Implementations;
@@ -23,12 +24,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RestWithASPNETUdemy
 {
     public class Startup
     {
-
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Environment { get; }
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -41,8 +42,6 @@ namespace RestWithASPNETUdemy
                 .CreateLogger();
         }
 
-
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -50,7 +49,8 @@ namespace RestWithASPNETUdemy
 
             new ConfigureFromConfigurationOptions<TokenConfiguration>(
                     Configuration.GetSection("TokenConfigurations")
-                ).Configure(tokenConfigurations);
+                )
+                .Configure(tokenConfigurations);
 
             services.AddSingleton(tokenConfigurations);
 
@@ -58,9 +58,10 @@ namespace RestWithASPNETUdemy
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            })
+            .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -74,12 +75,16 @@ namespace RestWithASPNETUdemy
 
             services.AddAuthorization(auth =>
             {
-                auth.AddPolicy("Bearer", new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder().AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build());
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser().Build());
             });
 
             services.AddCors(options => options.AddDefaultPolicy(builder =>
             {
-                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
             }));
 
             services.AddControllers();
@@ -101,27 +106,28 @@ namespace RestWithASPNETUdemy
             })
             .AddXmlSerializerFormatters();
 
-            var filterOptions = new HypermediaFilterOptions();
-            filterOptions.ContentResponseEnricherList.Add(new PersonEricher());
+            var filterOptions = new HyperMediaFilterOptions();
+            filterOptions.ContentResponseEnricherList.Add(new PersonEnricher());
+            filterOptions.ContentResponseEnricherList.Add(new BookEnricher());
 
             services.AddSingleton(filterOptions);
 
             //Versioning API
             services.AddApiVersioning();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-                {
-                    Title = "REST API's From 0 to Azure with ASP.NET Core 5 and Docker",
-                    Version = "v1",
-                    Description = "API RESTful developed in course 'REST API's From 0 to Azure with ASP.NET Core 5 and Docker'",
-                    Contact = new Microsoft.OpenApi.Models.OpenApiContact
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1",
+                    new OpenApiInfo
                     {
-                        Name = "Gabriel Bugue",
-                        Url = new Uri("https://github.com/Gabuu43")
-                    }
-                });
+                        Title = "REST API's From 0 to Azure with ASP.NET Core 5 and Docker",
+                        Version = "v1",
+                        Description = "API RESTful developed in course 'REST API's From 0 to Azure with ASP.NET Core 5 and Docker'",
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Leandro Costa",
+                            Url = new Uri("https://github.com/leandrocgsi")
+                        }
+                    });
             });
 
             //Dependency Injection
@@ -136,6 +142,7 @@ namespace RestWithASPNETUdemy
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         }
 
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -148,19 +155,17 @@ namespace RestWithASPNETUdemy
 
             app.UseRouting();
 
-            app.UseSwagger();
-
             app.UseCors();
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "REST API's From 0 to Azure with ASP.NET Core 5 and Docker - v1");
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                    "REST API's From 0 to Azure with ASP.NET Core 5 and Docker - v1");
             });
 
             var option = new RewriteOptions();
-
-            option.AddRedirect("^$","swagger");
-
+            option.AddRedirect("^$", "swagger");
             app.UseRewriter(option);
 
             app.UseAuthorization();
