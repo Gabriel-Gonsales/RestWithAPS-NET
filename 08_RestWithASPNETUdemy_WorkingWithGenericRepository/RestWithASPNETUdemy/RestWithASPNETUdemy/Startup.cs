@@ -16,11 +16,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using RestWithASPNETUdemy.Hypermedia.Filters;
 using RestWithASPNETUdemy.Hypermedia.Enricher;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace RestWithASPNETUdemy
 {
     public class Startup
     {
+
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Environment { get; }
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -66,6 +69,21 @@ namespace RestWithASPNETUdemy
             //Versioning API
             services.AddApiVersioning();
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "REST API's From 0 to Azure with ASP.NET Core 5 and Docker",
+                    Version = "v1",
+                    Description = "API RESTful developed in course 'REST API's From 0 to Azure with ASP.NET Core 5 and Docker'",
+                    Contact = new Microsoft.OpenApi.Models.OpenApiContact
+                    {
+                        Name = "Gabriel Bugue",
+                        Url = new Uri("https://github.com/Gabuu43")
+                    }
+                });
+            });
+
             //Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusinessImplementation>();
             services.AddScoped<IBookBusiness, BookBusinessImplementation>();
@@ -85,12 +103,25 @@ namespace RestWithASPNETUdemy
 
             app.UseRouting();
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "REST API's From 0 to Azure with ASP.NET Core 5 and Docker - v1");
+            });
+
+            var option = new RewriteOptions();
+
+            option.AddRedirect("^$","swagger");
+
+            app.UseRewriter(option);
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapControllerRoute("DefaultApi","{controller=values}/{id?}")
+                endpoints.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
             });
         }
         private void MigrateDatabase(string connection)

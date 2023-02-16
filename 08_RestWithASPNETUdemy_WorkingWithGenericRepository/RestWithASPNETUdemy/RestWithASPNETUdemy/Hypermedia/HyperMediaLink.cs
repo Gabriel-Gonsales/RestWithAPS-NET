@@ -15,7 +15,7 @@ namespace RestWithASPNETUdemy.Hypermedia
                 lock (_lock)
                 {
                     StringBuilder sb = new StringBuilder(href);
-                    return sb.Replace("%2f","/").ToString();
+                    return sb.Replace("%2F","/").ToString();
                 }
             }
             set 
