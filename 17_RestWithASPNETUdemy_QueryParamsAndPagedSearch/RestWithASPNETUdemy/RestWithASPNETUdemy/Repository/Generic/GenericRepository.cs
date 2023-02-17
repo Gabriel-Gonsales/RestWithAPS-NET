@@ -94,7 +94,7 @@ namespace RestWithASPNETUdemy.Repository.Generic
         public int GetCount(string query)
         {
             var result = "";
-            using(var connection = _context.Database.GetDbConnection())
+            using (var connection = _context.Database.GetDbConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
